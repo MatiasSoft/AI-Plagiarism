@@ -21,7 +21,10 @@ const PlagiarismDetector: React.FC = () => {
   const [comparisonFiles, setComparisonFiles] = useState<CodeFile[]>([]);
   const [results, setResults] = useState<PlagiarismResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const { calculateSimilarity } = useCodeSimilarity();
+  const [selectedAlgorithm, setSelectedAlgorithm] = useState('TF'); // Nuevo estado para el algoritmo
+  
+  // Asume que useCodeSimilarity devuelve todos los algoritmos
+  const { calculateSimilarityTF, calculateJaccard, calculateLevenshtein } = useCodeSimilarity();
 
   const handleComparison = async () => {
     if (!originalCode || comparisonFiles.length === 0) {
@@ -35,7 +38,24 @@ const PlagiarismDetector: React.FC = () => {
       const similarityThreshold = 0.98;
 
       const newResultsPromises = comparisonFiles.map(async (file) => {
-        const similarity = calculateSimilarity(originalCode, file.content);
+        let similarity = 0;
+
+        // Lógica para elegir el algoritmo según la selección del usuario
+        switch (selectedAlgorithm) {
+          case 'TF':
+            similarity = calculateSimilarityTF(originalCode, file.content);
+            break;
+          case 'Jaccard':
+            similarity = calculateJaccard(originalCode, file.content);
+            break;
+          case 'Levenshtein':
+            similarity = calculateLevenshtein(originalCode, file.content);
+            break;
+          default:
+            similarity = calculateSimilarityTF(originalCode, file.content);
+            break;
+        }
+
         const analysis = similarity > similarityThreshold
           ? {
               appliedTechniques: [],
@@ -50,8 +70,6 @@ const PlagiarismDetector: React.FC = () => {
           analysis,
         };
       });
-
-      
 
       const newResults = await Promise.all(newResultsPromises);
       newResults.sort((a, b) => b.similarity - a.similarity);
@@ -74,13 +92,14 @@ const PlagiarismDetector: React.FC = () => {
     <div>
       <h2 className="text-2xl font-semibold text-white mb-2">Analizador de similitud de código</h2>
       <p className="text-brand-text-light mb-4">
-        Compara múltiples scripts de python con un original usando técnicas de <strong>TF-IDF</strong>, <strong>similitud de coseno</strong> y <strong>Gemini IA</strong>.
+        Compara múltiples scripts de python con un original usando diferentes técnicas de similitud y Gemini IA.
       </p>
 
       <h3 className="text-xl font-semibold text-white mb-2">¿Cómo usarlo? 💻</h3>
       <ol className="list-decimal list-inside text-brand-text-light mb-6 space-y-1">
         <li>Sube el código original.</li>
         <li>Sube uno o más archivos a comparar.</li>
+        <li>Selecciona el algoritmo de similitud.</li>
         <li>Haz clic en "Comparar Archivos".</li>
         <li>Revisa el porcentaje de similitud y el análisis detallado.</li>
       </ol>
@@ -95,6 +114,23 @@ const PlagiarismDetector: React.FC = () => {
             <label className="block text-sm font-medium text-brand-text-light mb-2">2. Subir Archivos a Comparar</label>
             <MultiFileInput files={comparisonFiles} onFilesChange={setComparisonFiles} />
         </div>
+      </div>
+
+      {/* Selector de algoritmo */}
+      <div className="mb-6">
+        <label htmlFor="algorithm-select" className="block text-sm font-medium text-brand-text-light mb-2">
+          3. Seleccionar Algoritmo de Similitud
+        </label>
+        <select
+          id="algorithm-select"
+          value={selectedAlgorithm}
+          onChange={(e) => setSelectedAlgorithm(e.target.value)}
+          className="block w-full px-3 py-2 text-brand-text-dark bg-brand-light-gray border border-brand-border rounded-md shadow-sm focus:outline-none focus:ring-brand-primary focus:border-brand-primary sm:text-sm"
+        >
+          <option value="TF">TF + Similitud de Coseno (Recomendado)</option>
+          <option value="Jaccard">Similitud de Jaccard</option>
+          <option value="Levenshtein">Distancia de Levenshtein</option>
+        </select>
       </div>
 
       <div className="mt-6 flex flex-col items-center">
