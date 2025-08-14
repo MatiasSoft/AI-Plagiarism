@@ -23,7 +23,7 @@ const PlagiarismDetector: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedAlgorithm, setSelectedAlgorithm] = useState('TF'); // Nuevo estado para el algoritmo
   
-  // Asume que useCodeSimilarity devuelve todos los algoritmos
+
   const { calculateSimilarityTF, calculateJaccard, calculateLevenshtein } = useCodeSimilarity();
 
   const handleComparison = async () => {
@@ -56,13 +56,8 @@ const PlagiarismDetector: React.FC = () => {
             break;
         }
 
-        const analysis = similarity > similarityThreshold
-          ? {
-              appliedTechniques: [],
-              functionalEquivalence: "Los códigos son prácticamente idénticos.",
-              implementationAnalysis: "No se encontraron diferencias significativas.",
-            }
-          : await validateCode(originalCode, file.content);
+        const analysis = await validateCode(originalCode, file.content);
+
 
         return {
           fileName: file.name,
@@ -84,6 +79,7 @@ const PlagiarismDetector: React.FC = () => {
   
   const getSimilarityColor = (similarity: number) => {
     if (similarity > 0.95) return 'text-red-500';
+    if (similarity > 0.90) return 'text-orange-500';
     if (similarity > 0.70) return 'text-yellow-500';
     return 'text-green-500';
   };
@@ -92,7 +88,7 @@ const PlagiarismDetector: React.FC = () => {
     <div>
       <h2 className="text-2xl font-semibold text-white mb-2">Analizador de similitud de código</h2>
       <p className="text-brand-text-light mb-4">
-        Compara múltiples scripts de python con un original usando diferentes técnicas de similitud y Gemini IA.
+        Compara múltiples scripts de python con un original usando diferentes algoritmos y Gemini IA.
       </p>
 
       <h3 className="text-xl font-semibold text-white mb-2">¿Cómo usarlo? 💻</h3>
@@ -127,7 +123,7 @@ const PlagiarismDetector: React.FC = () => {
           onChange={(e) => setSelectedAlgorithm(e.target.value)}
           className="block w-full px-3 py-2 text-brand-text-dark bg-brand-light-gray border border-brand-border rounded-md shadow-sm focus:outline-none focus:ring-brand-primary focus:border-brand-primary sm:text-sm"
         >
-          <option value="TF">TF + Similitud de Coseno (Recomendado)</option>
+          <option value="TF">TF + Similitud de Coseno</option>
           <option value="Jaccard">Similitud de Jaccard</option>
           <option value="Levenshtein">Distancia de Levenshtein</option>
         </select>
