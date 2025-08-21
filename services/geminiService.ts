@@ -25,12 +25,11 @@ export const rewriteCode = async (originalCode: string, instructions: string, se
     1.  **Modificación de Comentarios:** Elimina, cambia o agrega nuevos comentarios en el código. Los comentarios deben relacionarse con la lógica del código, no sobre el proceso de generación.
     2.  **Cambio de Formato:** Modifica los espacios en blanco, indentación y formato general (PEP 8) sin afectar la lógica.
     3.  **Renombrado de Identificadores:** Cambia los nombres de variables, funciones, clases y otros identificadores por nombres equivalentes o menos descriptivos.
-    4.  **Reordenación de Código:** Cambia el orden de bloques de código o de declaraciones (siempre que la lógica lo permita).
-    5.  **Expresiones Alteradas:** Reordena los operandos o utiliza operadores equivalentes en expresiones (ej. a+b vs b+a).
-    6.  **Cambio de Tipos de Datos:** Sustituye tipos de datos por otros que sean funcionalmente equivalentes (ej. una lista por una tupla si no se modificará).
-    7.  **Instrucciones Redundantes:** Agrega variables o instrucciones que no afecten el resultado final del programa.
-    8.  **Estructuras de Control Equivalentes:** Reemplaza estructuras como \`if-elif-else\` por un diccionario o múltiples \`if\` anidados, o un bucle \`for\` por un \`while\`.
-    9.  **Modificación de Funcionalidad:** Agrega o elimina funciones o comportamiento que no impacten la funcionalidad principal del script, como funciones de registro o impresiones de depuración.
+    4.  **Reordenación de Código:** Cambia el orden de bloques de código o de declaraciones (siempre que la lógica lo permita), (ej. a+b vs b+a o bloques de codigos reordenados).
+    5.  **Cambio de Tipos de Datos:** Sustituye tipos de datos por otros que sean funcionalmente equivalentes (ej. una lista por una tupla si no se modificará).
+    6.  **Instrucciones Redundantes:** Agrega variables o instrucciones que no afecten el resultado final del programa.
+    7.  **Estructuras de Control Equivalentes:** Reemplaza estructuras como \`if-elif-else\` por un diccionario o múltiples \`if\` anidados, o un bucle \`for\` por un \`while\`.
+    8.  **Modificación de Funcionalidad:** Agrega o elimina funciones o comportamiento que no impacten la funcionalidad principal del script, como funciones de registro o impresiones de depuración.
 
 **REGLAS ESTRICTAS DE SALIDA (APLICAN A AMBAS ESTRATEGIAS):**
 - El código generado debe ser **sintácticamente correcto** y **ejecutable**.
@@ -114,7 +113,6 @@ Tu objetivo es identificar qué técnicas de modificación, de la lista provista
 - Cambio de Formato
 - Renombrado de Identificadores
 - Reordenación de Código
-- Expresiones Alteradas
 - Cambio de Tipos de Datos
 - Instrucciones Redundantes
 - Estructuras de Control Equivalentes
